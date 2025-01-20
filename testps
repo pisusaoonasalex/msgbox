@@ -1,5 +1,5 @@
 # PowerShell script to download and run msgbox.exe
 $url = "https://github.com/pisusaoonasalex/msgbox/raw/refs/heads/main/MessageBox.exe"
-$outputPath = \"$env:TEMP\\msgbox.exe\";
+$outputPath = Join-Path $env:TEMP 'msgbox.exe'
 Invoke-WebRequest -Uri $url -OutFile $outputPath
 Start-Process $outputPath
