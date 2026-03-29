@@ -1,4 +1,4 @@
-# Suppress progress output (THIS is the key fix)
+Start-Sleep -Milliseconds 300
 $ProgressPreference = 'SilentlyContinue'
 
 try {
