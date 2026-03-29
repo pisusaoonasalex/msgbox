@@ -33,6 +33,21 @@ try {
     Invoke-WebRequest -Uri $url -OutFile $outputPath -ErrorAction Stop
 
     Write-Host "Downloaded: $fileName"
+
+    # Check if the file is a .zip
+    if ($fileName.ToLower().EndsWith(".zip")) {
+        $extractPath = Join-Path $scriptDir "extracted"
+
+        # Create extraction folder if it doesn't exist
+        if (-not (Test-Path $extractPath)) {
+            New-Item -ItemType Directory -Path $extractPath | Out-Null
+        }
+
+        # Extract the zip
+        Expand-Archive -Path $outputPath -DestinationPath $extractPath -Force
+
+        Write-Host "Extracted to: $extractPath"
+    }
 }
 catch {
     Write-Error "An error occurred: $_"
