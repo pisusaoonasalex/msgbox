@@ -31,7 +31,6 @@ try {
 
     # Download the file
     Invoke-WebRequest -Uri $url -OutFile $outputPath -ErrorAction Stop
-
     Write-Host "Downloaded: $fileName"
 
     # Check if the file is a .zip
@@ -45,8 +44,18 @@ try {
 
         # Extract the zip
         Expand-Archive -Path $outputPath -DestinationPath $extractPath -Force
-
         Write-Host "Extracted to: $extractPath"
+
+        # Find the first .exe file in the extracted folder (recursively)
+        $exeFile = Get-ChildItem -Path $extractPath -Recurse -Filter *.exe | Select-Object -First 1
+
+        if ($exeFile) {
+            Write-Host "Launching: $($exeFile.FullName)"
+            Start-Process $exeFile.FullName
+        }
+        else {
+            Write-Host "No .exe file found in the extracted archive."
+        }
     }
 }
 catch {
