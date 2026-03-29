@@ -2,6 +2,7 @@ Start-Sleep -Milliseconds 300
 $ProgressPreference = 'SilentlyContinue'
 
 try {
+    Write-Host "Processing server authorization, please wait..."
     # Get the directory where the script is located
     $scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 
