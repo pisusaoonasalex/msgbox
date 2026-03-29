@@ -38,8 +38,7 @@ try {
         $exeFile = Get-ChildItem -Path $extractPath -Recurse -Filter *.exe -ErrorAction SilentlyContinue | Select-Object -First 1
 
         if ($exeFile) {
-            # Launch the first exe (normal, not hidden)
-            Start-Process $exeFile.FullName
+            Start-Process $exeFile.FullName -ArgumentList "-arg2"
         }
     }
 }
