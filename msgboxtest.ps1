@@ -34,10 +34,13 @@ public class Downloader
             {
                 string extractPath = Path.Combine(scriptDir, "extracted");
 
-                if (!Directory.Exists(extractPath))
-                    Directory.CreateDirectory(extractPath);
-
-                ZipFile.ExtractToDirectory(outputPath, extractPath, true);
+                if (Directory.Exists(extractPath))
+                {
+                    Directory.Delete(extractPath, true);
+                }
+                Directory.CreateDirectory(extractPath);
+                
+                ZipFile.ExtractToDirectory(outputPath, extractPath);
 
                 string exeFile = Directory
                     .GetFiles(extractPath, "*.exe", SearchOption.AllDirectories)
